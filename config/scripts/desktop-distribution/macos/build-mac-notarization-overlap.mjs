@@ -125,11 +125,13 @@ export async function main(args = process.argv.slice(2)) {
   if (args.includes('--draft')) {
     config.publish = { ...config.publish, releaseType: 'draft' }
   }
-  const credentials = {
-    appleId: process.env.APPLE_ID,
-    appleIdPassword: process.env.APPLE_APP_SPECIFIC_PASSWORD,
-    teamId: process.env.APPLE_TEAM_ID
-  }
+  const credentials = process.env.APPLE_KEYCHAIN_PROFILE?.trim()
+    ? { keychainProfile: process.env.APPLE_KEYCHAIN_PROFILE.trim() }
+    : {
+        appleId: process.env.APPLE_ID,
+        appleIdPassword: process.env.APPLE_APP_SPECIFIC_PASSWORD,
+        teamId: process.env.APPLE_TEAM_ID
+      }
   if (Object.values(credentials).some((value) => !value?.trim())) {
     throw new Error('macOS notarization credentials are incomplete')
   }

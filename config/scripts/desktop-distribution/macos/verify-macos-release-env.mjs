@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 
 const required = [
-  'APPLE_ID',
-  'APPLE_APP_SPECIFIC_PASSWORD',
-  'APPLE_TEAM_ID',
-  'CSC_LINK',
-  'CSC_KEY_PASSWORD'
+  ...(process.env.APPLE_KEYCHAIN_PROFILE?.trim()
+    ? []
+    : ['APPLE_ID', 'APPLE_APP_SPECIFIC_PASSWORD', 'APPLE_TEAM_ID']),
+  ...(process.env.CSC_NAME?.trim() ? [] : ['CSC_LINK', 'CSC_KEY_PASSWORD'])
 ]
 
 const missing = required.filter((key) => {
@@ -20,8 +19,8 @@ if (missing.length > 0) {
     console.error(`- ${key}`)
   }
   console.error('')
-  console.error('Use `pnpm build:mac` for local ad-hoc builds, or provide the')
-  console.error('Developer ID + notarization credentials before running the')
-  console.error('production release build.')
+  console.error('Use `pnpm build:mac` for local ad-hoc builds, or configure a')
+  console.error('Developer ID identity and Apple notarization credentials before')
+  console.error('running the production release build.')
   process.exit(1)
 }
