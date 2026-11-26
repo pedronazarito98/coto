@@ -1,0 +1,4 @@
+provider: github
+owner: pedronazarito98
+repo: coto
+updaterCacheDirName: coto-updater

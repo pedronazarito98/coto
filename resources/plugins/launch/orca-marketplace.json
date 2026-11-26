@@ -1,0 +1,16 @@
+{
+  "name": "Coto Official Plugins",
+  "owner": "coto",
+  "plugins": [
+    {
+      "id": "coto.coto-multipass-recipes",
+      "source": {
+        "kind": "git",
+        "url": "https://github.com/coto/coto-multipass-recipes.git",
+        "ref": "v1.0.0"
+      },
+      "description": "A reviewed starter lifecycle for disposable Multipass workspaces.",
+      "categories": ["vm-recipes", "official"]
+    }
+  ]
+}

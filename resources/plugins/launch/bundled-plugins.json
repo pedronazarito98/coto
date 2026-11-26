@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "plugins": [
+    {
+      "pluginKey": "coto.coto-github-vscode-theme",
+      "path": "coto.coto-github-vscode-theme",
+      "contentHash": "14e2f3f43e1a5ac8c136201fc9693167e2bb47edff44ce03ae338e679ed7349f"
+    },
+    {
+      "pluginKey": "coto.coto-vscode-default-themes",
+      "path": "coto.coto-vscode-default-themes",
+      "contentHash": "ea719f7302001fa73467e34dcad0f46cb4a77e4bb1e3262f55e4f04350a2441b"
+    }
+  ]
+}
