@@ -23,48 +23,37 @@ if (process.platform !== 'darwin') {
 const args = process.argv.slice(2)
 const bundleId = readArg('--bundle-id') ?? 'com.coto.app'
 const outputPath = readArg('--output') ?? defaultOutputPath
-// Why: dev launches only need the host architecture; release builds ship a
-// universal binary matching the app's x64 + arm64 targets.
-const singleArch = args.includes('--single-arch')
+// Apple Silicon only; Coto requires macOS 26.0+ on arm64.
+const TARGET_TRIPLE = 'arm64-apple-macosx26.0'
 
 const workDir = path.join(tmpdir(), `orca-notification-status-${process.pid}`)
 mkdirSync(workDir, { recursive: true })
 try {
   const plistPath = path.join(workDir, 'Info.plist')
   writeFileSync(plistPath, embeddedInfoPlist(bundleId), 'utf8')
-  const triples = singleArch
-    ? [process.arch === 'arm64' ? 'arm64-apple-macosx' : 'x86_64-apple-macosx']
-    : ['arm64-apple-macosx', 'x86_64-apple-macosx']
-  const builtBinaries = triples.map((triple) => {
-    const output = path.join(workDir, `orca-notification-status-${triple}`)
-    execFileSync(
-      'swiftc',
-      [
-        '-O',
-        sourcePath,
-        '-target',
-        triple.replace('-apple-macosx', '-apple-macosx11.0'),
-        '-o',
-        output,
-        '-Xlinker',
-        '-sectcreate',
-        '-Xlinker',
-        '__TEXT',
-        '-Xlinker',
-        '__info_plist',
-        '-Xlinker',
-        plistPath
-      ],
-      { stdio: 'inherit' }
-    )
-    return output
-  })
+  const builtBinary = path.join(workDir, `orca-notification-status-${TARGET_TRIPLE}`)
+  execFileSync(
+    'swiftc',
+    [
+      '-O',
+      sourcePath,
+      '-target',
+      TARGET_TRIPLE,
+      '-o',
+      builtBinary,
+      '-Xlinker',
+      '-sectcreate',
+      '-Xlinker',
+      '__TEXT',
+      '-Xlinker',
+      '__info_plist',
+      '-Xlinker',
+      plistPath
+    ],
+    { stdio: 'inherit' }
+  )
   mkdirSync(path.dirname(outputPath), { recursive: true })
-  if (builtBinaries.length === 1) {
-    execFileSync('cp', [builtBinaries[0], outputPath])
-  } else {
-    execFileSync('lipo', ['-create', ...builtBinaries, '-output', outputPath])
-  }
+  execFileSync('cp', [builtBinary, outputPath])
   execFileSync('chmod', ['755', outputPath])
 } finally {
   rmSync(workDir, { recursive: true, force: true })

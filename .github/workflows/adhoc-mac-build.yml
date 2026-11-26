@@ -273,7 +273,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [x64, arm64]
+        arch: [arm64]
     # Notary waits dominate; 12 vCPUs packaged no faster than the hourly build’s 6.
     runs-on: blacksmith-6vcpu-macos-15
     # Allow 150min for install 3×10 + publish 2×45 + ~25 setup/build/verify; outer timeout would prevent cleanup.
@@ -343,14 +343,14 @@ jobs:
         shell: bash
         run: if [ -f config/scripts/electron-installation/prune-electron-download-cache.mjs ]; then node config/scripts/electron-installation/prune-electron-download-cache.mjs; fi
 
-      # Install both x64/arm64 optional natives because this arm64 runner packages both.
+      # Install Apple Silicon optional natives.
       - name: Install dependencies
         uses: nick-fields/retry@v4
         with:
           timeout_minutes: 10
           max_attempts: 3
           retry_wait_seconds: 30
-          command: pnpm install --frozen-lockfile --cpu=current,x64,arm64
+          command: pnpm install --frozen-lockfile --cpu=current,arm64
 
       # Build required out/mobile-web after installing its React Native/Expo dependencies.
       - uses: ./.github/actions/install-mobile-dependencies
@@ -420,7 +420,7 @@ jobs:
           timeout_minutes: 45
           max_attempts: 2
           retry_wait_seconds: 30
-          command: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$(if [ -f config/scripts/orcad-distribution/prebuilds/pinned-node-downloads.mjs ]; then printf %s config/scripts/orcad-distribution/prebuilds/pinned-node-downloads.mjs; else printf %s config/scripts/pinned-node-downloads.mjs; fi)" darwin-arm64 darwin-x64 && node "$(if [ -f config/scripts/native-build/node-addons/ensure-native-runtime.mjs ]; then printf %s config/scripts/native-build/node-addons/ensure-native-runtime.mjs; else printf %s config/scripts/ensure-native-runtime.mjs; fi)" --runtime=electron && ORCA_MAC_ADHOC=1 pnpm exec electron-builder --config config/electron-builder.config.cjs --mac dmg zip --${{ matrix.arch }} --publish never
+          command: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$(if [ -f config/scripts/orcad-distribution/prebuilds/pinned-node-downloads.mjs ]; then printf %s config/scripts/orcad-distribution/prebuilds/pinned-node-downloads.mjs; else printf %s config/scripts/pinned-node-downloads.mjs; fi)" darwin-arm64 && node "$(if [ -f config/scripts/native-build/node-addons/ensure-native-runtime.mjs ]; then printf %s config/scripts/native-build/node-addons/ensure-native-runtime.mjs; else printf %s config/scripts/ensure-native-runtime.mjs; fi)" --runtime=electron && ORCA_MAC_ADHOC=1 pnpm exec electron-builder --config config/electron-builder.config.cjs --mac dmg zip --${{ matrix.arch }} --publish never
         env:
           ORCA_ADHOC_BUILD_VERSION: ${{ needs.orcad-template-support.outputs.version }}
           ORCA_BUILD_COMMIT: ${{ needs.orcad-template-support.outputs.commit }}
@@ -508,7 +508,7 @@ jobs:
           owner: pedronazarito98
           repositories: orca-adhoc
 
-      - name: Require both architecture jobs
+      - name: Require Apple Silicon job
         env:
           ARCH_RESULT: ${{ needs.build-adhoc-mac-arch.result }}
         run: test "$ARCH_RESULT" = success

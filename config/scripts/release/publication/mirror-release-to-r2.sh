@@ -30,7 +30,7 @@ set -euo pipefail
 REPO="${REPO:-pedronazarito98/coto}"
 BUCKET="${BUCKET:-orca-downloads}"
 PUBLIC_BASE="${PUBLIC_BASE:-https://downloads.coto.app}"
-WEBSITE_ASSETS=(coto-macos-arm64.dmg coto-macos-x64.dmg orca-windows-setup.exe orca-linux.AppImage)
+WEBSITE_ASSETS=(coto-macos-arm64.dmg orca-windows-setup.exe orca-linux.AppImage)
 CLOUDFLARE_ACCOUNT_ID="${CLOUDFLARE_ACCOUNT_ID:-57e6ddd3bb755dbf8e8dc7ff557e9014}"
 R2_ENDPOINT="https://$CLOUDFLARE_ACCOUNT_ID.r2.cloudflarestorage.com"
 # wrangler r2 object put caps single uploads at 300 MiB; the S3 path has no such cap.

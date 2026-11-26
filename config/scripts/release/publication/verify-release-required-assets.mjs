@@ -19,12 +19,8 @@ export function getRequiredReleaseAssetNames(tag) {
     `orca-ide-${version}.aarch64.rpm`,
     'orca-windows-setup.exe',
     'orca-windows-setup.exe.blockmap',
-    `Orca-${version}-mac.zip`,
-    `Orca-${version}-mac.zip.blockmap`,
-    `Orca-${version}-arm64-mac.zip`,
-    `Orca-${version}-arm64-mac.zip.blockmap`,
-    'coto-macos-x64.dmg',
-    'coto-macos-x64.dmg.blockmap',
+    `Coto-${version}-arm64-mac.zip`,
+    `Coto-${version}-arm64-mac.zip.blockmap`,
     'coto-macos-arm64.dmg',
     'coto-macos-arm64.dmg.blockmap'
   ]

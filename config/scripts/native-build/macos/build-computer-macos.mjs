@@ -1,7 +1,12 @@
 import { spawnSync } from 'node:child_process'
 import { chmodSync, copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import path from 'node:path'
 import { MACOS_DEPLOYMENT_TARGET } from '../posix/build-provider-exec.mjs'
+
+const { findInstalledMacSigningIdentity, resolveExplicitMacSigningIdentity } = createRequire(
+  import.meta.url
+)('../../desktop-distribution/macos/mac-signing-identity.cjs')
 
 const repoRoot = path.resolve(import.meta.dirname, '../../../..')
 const packagePath = path.join(repoRoot, 'native', 'computer-use-macos')
@@ -18,14 +23,14 @@ const entitlementsPath = path.join(
 const bundleId = process.env.ORCA_COMPUTER_MACOS_BUNDLE_ID ?? 'com.coto.app.computer-use'
 const displayName = 'Coto Computer Use'
 const signingIdentity = resolveSigningIdentity()
-const universalTriples = ['arm64-apple-macosx', 'x86_64-apple-macosx']
+const targetTriple = 'arm64-apple-macosx'
 
 if (process.platform !== 'darwin') {
   process.exit(0)
 }
 
 assertPackageMatchesDeploymentTarget()
-buildUniversalBinary()
+buildArm64Binary()
 chmodSync(binaryPath, 0o755)
 createHelperApp()
 
@@ -42,24 +47,24 @@ function assertPackageMatchesDeploymentTarget() {
   }
 }
 
-function buildUniversalBinary() {
-  const builtBinaries = universalTriples.map((triple) => {
-    // SwiftPM 6.4+ swiftbuild default skips the .build/<triple>/release layout lipo reads (#21145)
-    run('swift', [
-      'build',
-      '-c',
-      'release',
-      '--package-path',
-      packagePath,
-      '--triple',
-      triple,
-      '--build-system',
-      'native'
-    ])
-    return path.join(packagePath, '.build', triple, 'release', 'orca-computer-use-macos')
-  })
+function buildArm64Binary() {
+  // SwiftPM 6.4+ swiftbuild default skips the .build/<triple>/release output path (#21145).
+  run('swift', [
+    'build',
+    '-c',
+    'release',
+    '--package-path',
+    packagePath,
+    '--triple',
+    targetTriple,
+    '--build-system',
+    'native'
+  ])
   mkdirSync(path.dirname(binaryPath), { recursive: true })
-  run('lipo', ['-create', ...builtBinaries, '-output', binaryPath])
+  copyFileSync(
+    path.join(packagePath, '.build', targetTriple, 'release', 'orca-computer-use-macos'),
+    binaryPath
+  )
 }
 
 function createHelperApp() {
@@ -89,24 +94,14 @@ function codesignArgs(identity, targetPath) {
 }
 
 function resolveSigningIdentity() {
-  const explicitIdentity = process.env.ORCA_COMPUTER_MACOS_SIGN_IDENTITY ?? process.env.CSC_NAME
-  if (explicitIdentity) {
-    return explicitIdentity
-  }
-  const identities = spawnSync('security', ['find-identity', '-v', '-p', 'codesigning'], {
-    encoding: 'utf8'
-  })
-  if (identities.status !== 0 || !identities.stdout) {
-    return '-'
-  }
-  const developmentMatch = identities.stdout.match(/"([^"]*Apple Development:[^"]+)"/)
-  if (process.env.ORCA_MAC_RELEASE !== '1' && developmentMatch) {
-    return developmentMatch[1]
-  }
-  const releaseMatch =
-    identities.stdout.match(/"([^"]*Developer ID Application:[^"]+)"/) ??
-    identities.stdout.match(/"([^"]*Apple Distribution:[^"]+)"/)
-  return releaseMatch?.[1] ?? developmentMatch?.[1] ?? '-'
+  const explicit = process.env.ORCA_COMPUTER_MACOS_SIGN_IDENTITY ?? process.env.CSC_NAME
+  return (
+    resolveExplicitMacSigningIdentity(explicit, null) ??
+    findInstalledMacSigningIdentity(null, {
+      allowDevelopment: process.env.ORCA_MAC_RELEASE !== '1'
+    }) ??
+    '-'
+  )
 }
 
 function run(command, args) {

@@ -214,7 +214,7 @@ VS Code 的编辑器，处处自动保存 — 把文件或图片直接拖入智�
 ### 桌面端 — macOS、Windows、Linux
 
 - **[从 coto.app 下载](https://coto.app/download)**
-- 或直接获取安装包：[macOS Apple Silicon](https://github.com/pedronazarito98/coto/releases/latest/download/coto-macos-arm64.dmg) · [macOS Intel](https://github.com/pedronazarito98/coto/releases/latest/download/coto-macos-x64.dmg) · [Windows (.exe)](https://github.com/pedronazarito98/coto/releases/latest/download/coto-windows-setup.exe) · [Linux AppImage](https://github.com/pedronazarito98/coto/releases/latest/download/coto-linux.AppImage) · [全部构建](https://github.com/pedronazarito98/coto/releases/latest)
+- 或直接获取安装包：[macOS Apple Silicon (macOS 26.0+)](https://github.com/pedronazarito98/coto/releases/latest/download/coto-macos-arm64.dmg) · [Windows (.exe)](https://github.com/pedronazarito98/coto/releases/latest/download/coto-windows-setup.exe) · [Linux AppImage](https://github.com/pedronazarito98/coto/releases/latest/download/coto-linux.AppImage) · [全部构建](https://github.com/pedronazarito98/coto/releases/latest)
 
 _也可以通过包管理器安装：_
 

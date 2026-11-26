@@ -4,10 +4,10 @@ import { mkdir, readFile, stat, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 
 function expectedNames(arch, version) {
-  if (!['arm64', 'x64'].includes(arch) || !/^[0-9][0-9A-Za-z.+-]*$/.test(version)) {
+  if (arch !== 'arm64' || !/^[0-9][0-9A-Za-z.+-]*$/.test(version)) {
     throw new Error('Invalid Mac architecture or version')
   }
-  return [`Coto-${version}${arch === 'arm64' ? '-arm64' : ''}-mac.zip`, `coto-macos-${arch}.dmg`]
+  return [`Coto-${version}-arm64-mac.zip`, 'coto-macos-arm64.dmg']
 }
 
 export function validateManifest(manifest, arch, version) {
@@ -61,39 +61,33 @@ export async function stageManifest(manifest, arch, version, directory) {
 }
 
 export function mergeManifests(records, version, uploaded) {
-  if (records.length !== 2 || new Set(records.map((record) => record.arch)).size !== 2) {
-    throw new Error('Both Mac architectures are required')
+  if (records.length !== 1 || records[0]?.arch !== 'arm64') {
+    throw new Error('Apple Silicon (arm64) Mac manifest is required')
   }
-  for (const arch of ['arm64', 'x64']) {
-    const record = records.find((item) => item.arch === arch)
-    if (!record) {
-      throw new Error(`Missing ${arch} manifest`)
-    }
-    const names = validateManifest(record.manifest, arch, version)
-    const required = names.flatMap((name) => [name, `${name}.blockmap`])
-    if (record.assets.length !== required.length) {
-      throw new Error('Incomplete staged assets')
-    }
-    for (const name of required) {
-      const local = record.assets.filter((asset) => asset.name === name)
-      const remote = uploaded.filter((asset) => asset.name === name)
-      if (
-        local.length !== 1 ||
-        remote.length !== 1 ||
-        !Number.isSafeInteger(local[0].size) ||
-        local[0].size <= 0 ||
-        local[0].size !== remote[0].size
-      ) {
-        throw new Error(`Missing or mismatched uploaded asset: ${name}`)
-      }
+  const [record] = records
+  const names = validateManifest(record.manifest, 'arm64', version)
+  const required = names.flatMap((name) => [name, `${name}.blockmap`])
+  if (record.assets.length !== required.length) {
+    throw new Error('Incomplete staged assets')
+  }
+  for (const name of required) {
+    const local = record.assets.filter((asset) => asset.name === name)
+    const remote = uploaded.filter((asset) => asset.name === name)
+    if (
+      local.length !== 1 ||
+      remote.length !== 1 ||
+      !Number.isSafeInteger(local[0].size) ||
+      local[0].size <= 0 ||
+      local[0].size !== remote[0].size
+    ) {
+      throw new Error(`Missing or mismatched uploaded asset: ${name}`)
     }
   }
-  const arm = records.find((record) => record.arch === 'arm64').manifest
-  const intel = records.find((record) => record.arch === 'x64').manifest
+  const arm = record.manifest
   const canonical = arm.files.find((file) => file.url.endsWith('.zip'))
   return {
     ...arm,
-    files: [...arm.files, ...intel.files],
+    files: [...arm.files],
     path: canonical.url,
     sha512: canonical.sha512
   }
@@ -111,11 +105,7 @@ async function main([mode, first, second, third, fourth]) {
       `${record.assets.map((asset) => asset.name).join('\n')}\n`
     )
   } else if (mode === 'merge') {
-    const records = await Promise.all(
-      ['arm64', 'x64'].map(async (arch) =>
-        JSON.parse(await readFile(join(second, `${arch}.json`), 'utf8'))
-      )
-    )
+    const records = [JSON.parse(await readFile(join(second, 'arm64.json'), 'utf8'))]
     const { assets } = JSON.parse(await readFile(join(second, 'assets.json'), 'utf8'))
     // JSON is YAML 1.2 and preserves every updater metadata field without another dependency.
     await writeFile(

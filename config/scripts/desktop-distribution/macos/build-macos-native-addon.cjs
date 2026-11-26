@@ -4,7 +4,7 @@ const { tmpdir } = require('node:os')
 const { join, resolve } = require('node:path')
 
 function buildMacNativeAddon(resourcesDir, arch, nativeDir, addonName) {
-  if (process.platform !== 'darwin' || !['x64', 'arm64'].includes(arch)) {
+  if (process.platform !== 'darwin' || arch !== 'arm64') {
     throw new Error(`Cannot build macOS native addon for ${process.platform}/${arch}`)
   }
   const root = resolve(__dirname, '../../../..')

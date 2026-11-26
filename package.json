@@ -10,7 +10,7 @@
   "main": "./out/main/index.js",
   "scripts": {
     "check:dependencies": "pnpm run build:packages && node config/scripts/dependency-security/audit-tools/check-dependency-security.mjs",
-    "install:release": "pnpm install --frozen-lockfile --cpu=current,x64,arm64",
+    "install:release": "node -e \"const { execFileSync } = require('node:child_process'); execFileSync(process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm', ['install', '--frozen-lockfile', '--cpu=' + (process.platform === 'darwin' ? 'arm64' : 'current,x64,arm64')], { stdio: 'inherit' })\"",
     "audit:perf": "oxlint --config config/oxlint-performance-audit.json --format json src",
     "eval:bot-automations": "node config/scripts/workspace-package-build/build-workspace-packages.mjs && vitest run --config config/vitest.bot-automation-eval.config.ts",
     "eval:bot-orchestration": "node config/scripts/workspace-package-build/build-workspace-packages.mjs && vitest run --config config/vitest.bot-orchestration-eval.config.ts",
@@ -397,7 +397,6 @@
     "@orca/windows-registry": "workspace:*",
     "@orca/windows-security": "workspace:*",
     "@transcribe-cpp/darwin-arm64-metal": "0.4.1",
-    "@transcribe-cpp/darwin-x64-cpu": "0.4.1",
     "@transcribe-cpp/linux-arm64-cpu-vulkan": "0.4.1",
     "@transcribe-cpp/linux-x64-cpu-vulkan": "0.4.1",
     "@transcribe-cpp/win32-x64-cpu-vulkan": "0.4.1",

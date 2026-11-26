@@ -3,8 +3,8 @@
 Default to free GitHub-hosted standard runners: the repository is public and the
 Enterprise plan allows 1,000 concurrent jobs (50 macOS). Use Blacksmith only for:
 
-- macOS packaging: adhoc, hourly, daily and `release-mac-build.yml`. Hosted
-  `macos-15` cannot boot the packaged x64 terminal host that `afterPack` verifies.
+- macOS packaging: adhoc, hourly, daily and `release-mac-build.yml` use Blacksmith
+  Apple Silicon runners (`arm64`, macOS 26.0+ target).
 - The adhoc Windows build (a developer is waiting).
 - Hardware-sensitive performance benchmarks. Operation-count contracts
   (`performance-contracts.yml`) are not, and run hosted.
@@ -64,8 +64,8 @@ These stay on GitHub-hosted runners even where the policy above picks Blacksmith
 - Windows WSL and WSL2 tests retain GitHub runners: Blacksmith Windows runners do
   not support the required nested virtualization.
 - Windows signing and its rehearsal retain GitHub runners for SignPath provenance.
-- Intel Mac and Windows ARM qualification retain their native GitHub runners;
-  Blacksmith does not offer these architectures.
+- Windows ARM qualification retains its native GitHub runner;
+  Blacksmith does not offer that architecture.
 - Windows desktop lifecycle tests retain their existing GitHub desktop images.
 - Mac SSH hostile-host tests retain GitHub images because Blacksmith's shell
   initialization restores the toolchain PATH that these fixtures must hide.

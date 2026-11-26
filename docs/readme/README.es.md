@@ -214,7 +214,7 @@ Funciona con **cualquier agente CLI** — si corre en una terminal, corre en Cot
 ### Escritorio — macOS, Windows, Linux
 
 - **[Descarga desde coto.app](https://coto.app/download)**
-- O descarga un build directamente: [macOS Apple Silicon](https://github.com/pedronazarito98/coto/releases/latest/download/coto-macos-arm64.dmg) · [macOS Intel](https://github.com/pedronazarito98/coto/releases/latest/download/coto-macos-x64.dmg) · [Windows (.exe)](https://github.com/pedronazarito98/coto/releases/latest/download/coto-windows-setup.exe) · [Linux AppImage](https://github.com/pedronazarito98/coto/releases/latest/download/coto-linux.AppImage) · [Todos los builds](https://github.com/pedronazarito98/coto/releases/latest)
+- O descarga un build directamente: [macOS Apple Silicon (macOS 26.0+)](https://github.com/pedronazarito98/coto/releases/latest/download/coto-macos-arm64.dmg) · [Windows (.exe)](https://github.com/pedronazarito98/coto/releases/latest/download/coto-windows-setup.exe) · [Linux AppImage](https://github.com/pedronazarito98/coto/releases/latest/download/coto-linux.AppImage) · [Todos los builds](https://github.com/pedronazarito98/coto/releases/latest)
 
 _O mediante un gestor de paquetes:_
 

@@ -216,7 +216,7 @@ diff의 어느 줄에든 코멘트를 남기고 에이전트에게 바로 보내
 ### 데스크톱 — macOS, Windows, Linux
 
 - **[coto.app에서 다운로드](https://coto.app/download)**
-- 또는 빌드를 직접 받기: [macOS Apple Silicon](https://github.com/pedronazarito98/coto/releases/latest/download/coto-macos-arm64.dmg) · [macOS Intel](https://github.com/pedronazarito98/coto/releases/latest/download/coto-macos-x64.dmg) · [Windows (.exe)](https://github.com/pedronazarito98/coto/releases/latest/download/coto-windows-setup.exe) · [Linux AppImage](https://github.com/pedronazarito98/coto/releases/latest/download/coto-linux.AppImage) · [전체 빌드](https://github.com/pedronazarito98/coto/releases/latest)
+- 또는 빌드를 직접 받기: [macOS Apple Silicon (macOS 26.0+)](https://github.com/pedronazarito98/coto/releases/latest/download/coto-macos-arm64.dmg) · [Windows (.exe)](https://github.com/pedronazarito98/coto/releases/latest/download/coto-windows-setup.exe) · [Linux AppImage](https://github.com/pedronazarito98/coto/releases/latest/download/coto-linux.AppImage) · [전체 빌드](https://github.com/pedronazarito98/coto/releases/latest)
 
 _또는 패키지 매니저로 설치:_
 

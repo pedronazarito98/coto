@@ -279,12 +279,12 @@ Works with **any CLI agent** — if it runs in a terminal, it runs in Coto.
 ### Desktop — macOS, Windows, Linux
 
 - **[Download from coto.app](https://coto.app/download)**
-- Or grab a build directly: [macOS Apple Silicon](https://github.com/pedronazarito98/coto/releases/latest/download/coto-macos-arm64.dmg) · [macOS Intel](https://github.com/pedronazarito98/coto/releases/latest/download/coto-macos-x64.dmg) · [Windows (.exe)](https://github.com/pedronazarito98/coto/releases/latest/download/coto-windows-setup.exe) · [Linux AppImage](https://github.com/pedronazarito98/coto/releases/latest/download/coto-linux.AppImage) · [All builds](https://github.com/pedronazarito98/coto/releases/latest)
+- Or grab a build directly: [macOS Apple Silicon (macOS 26.0+)](https://github.com/pedronazarito98/coto/releases/latest/download/coto-macos-arm64.dmg) · [Windows (.exe)](https://github.com/pedronazarito98/coto/releases/latest/download/coto-windows-setup.exe) · [Linux AppImage](https://github.com/pedronazarito98/coto/releases/latest/download/coto-linux.AppImage) · [All builds](https://github.com/pedronazarito98/coto/releases/latest)
 
 _Or via a package manager:_
 
 ```bash
-# macOS (Homebrew)
+# macOS (Apple Silicon, macOS 26.0+ — Homebrew)
 # Always use the full name; bare `coto` is an unrelated Plotly cask.
 brew install --cask pedronazarito98/coto/coto
 # Upgrade an existing install

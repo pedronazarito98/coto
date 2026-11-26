@@ -75,7 +75,7 @@ jobs:
           echo "branch=bump/${branch_token}-${VERSION}" >>"$GITHUB_OUTPUT"
           echo "title=${token} ${VERSION}" >>"$GITHUB_OUTPUT"
 
-      - name: Download DMGs and compute sha256
+      - name: Download DMG and compute sha256
         id: hash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -86,18 +86,14 @@ jobs:
           gh release download "$TAG" \
             --repo "${{ github.repository }}" \
             --pattern 'coto-macos-arm64.dmg' \
-            --pattern 'coto-macos-x64.dmg' \
             --dir dmgs
           arm=$(sha256sum dmgs/coto-macos-arm64.dmg | awk '{print $1}')
-          intel=$(sha256sum dmgs/coto-macos-x64.dmg  | awk '{print $1}')
-          echo "arm=$arm"     >>"$GITHUB_OUTPUT"
-          echo "intel=$intel" >>"$GITHUB_OUTPUT"
+          echo "arm=$arm" >>"$GITHUB_OUTPUT"
 
       - name: Render updated cask file
         env:
           VERSION: ${{ steps.tag.outputs.version }}
           ARM_SHA: ${{ steps.hash.outputs.arm }}
-          INTEL_SHA: ${{ steps.hash.outputs.intel }}
           CASK_PATH: ${{ steps.cask.outputs.path }}
         run: |
           set -euo pipefail
@@ -107,10 +103,8 @@ jobs:
           src = p.read_text()
           src = re.sub(r'version "[^"]+"',
                        f'version "{os.environ["VERSION"]}"', src, count=1)
-          src = re.sub(r'sha256 arm:\s*"[0-9a-f]+",\s*\n\s*intel:\s*"[0-9a-f]+"',
-                       'sha256 arm:   "{arm}",\n         intel: "{intel}"'.format(
-                           arm=os.environ["ARM_SHA"],
-                           intel=os.environ["INTEL_SHA"]),
+          src = re.sub(r'sha256 "[0-9a-f]+"',
+                       f'sha256 "{os.environ["ARM_SHA"]}"',
                        src, count=1)
           p.write_text(src)
           print(src)

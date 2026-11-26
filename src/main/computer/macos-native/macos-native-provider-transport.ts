@@ -20,7 +20,7 @@ export type StartedMacOSProviderSocket = {
   socketToken: string
 }
 
-// Darwin 22 is macOS 13; Orca.app's own 13.4 minimum already rules out 13.0-13.3.
+// Darwin 22 is macOS 13+; Coto.app requires macOS 26.0 (Darwin 25) on Apple Silicon.
 export function isMacOS13OrNewer(): boolean {
   const darwinMajor = Number.parseInt(release().split('.')[0] ?? '', 10)
   return Number.isFinite(darwinMajor) && darwinMajor >= 22

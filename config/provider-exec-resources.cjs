@@ -4,10 +4,14 @@ const { join } = require('node:path')
 
 const PROVIDER_EXEC_EXECUTABLE = 'orca-provider-exec'
 
-// electron-builder `Arch` enum: x64=1, arm64=3. POSIX provider CLIs cannot launch without it.
+// electron-builder `Arch` enum: x64=1, arm64=3. macOS ships arm64 only; Linux ships x64 and arm64.
 function providerExecTarget(platform, archEnum) {
   const arch = { 1: 'x64', 3: 'arm64' }[archEnum]
-  if (!arch || (platform !== 'darwin' && platform !== 'linux')) {
+  if (
+    !arch ||
+    (platform === 'darwin' && arch !== 'arm64') ||
+    (platform !== 'darwin' && platform !== 'linux')
+  ) {
     throw new Error(`Unsupported provider exec packaging target: ${platform} ${archEnum}`)
   }
   return `${platform}-${arch}`

@@ -217,7 +217,7 @@ Coto'yı ajanlar da kullanır - her akışı `coto worktree create`, `snapshot`,
 ### Masaüstü - macOS, Windows, Linux
 
 - **[coto.app üzerinden indirin](https://coto.app/download)**
-- Ya da derlemeyi doğrudan alın: [macOS Apple Silicon](https://github.com/pedronazarito98/coto/releases/latest/download/coto-macos-arm64.dmg) · [macOS Intel](https://github.com/pedronazarito98/coto/releases/latest/download/coto-macos-x64.dmg) · [Windows (.exe)](https://github.com/pedronazarito98/coto/releases/latest/download/coto-windows-setup.exe) · [Linux AppImage](https://github.com/pedronazarito98/coto/releases/latest/download/coto-linux.AppImage) · [Tüm derlemeler](https://github.com/pedronazarito98/coto/releases/latest)
+- Ya da derlemeyi doğrudan alın: [macOS Apple Silicon (macOS 26.0+)](https://github.com/pedronazarito98/coto/releases/latest/download/coto-macos-arm64.dmg) · [Windows (.exe)](https://github.com/pedronazarito98/coto/releases/latest/download/coto-windows-setup.exe) · [Linux AppImage](https://github.com/pedronazarito98/coto/releases/latest/download/coto-linux.AppImage) · [Tüm derlemeler](https://github.com/pedronazarito98/coto/releases/latest)
 
 _Ya da bir paket yöneticisiyle:_
 

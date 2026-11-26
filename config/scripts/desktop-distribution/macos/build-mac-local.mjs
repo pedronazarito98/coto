@@ -29,11 +29,21 @@ export function getLocalBuildIdentity() {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.filename)) {
+  if (process.platform !== 'darwin' || process.arch !== 'arm64') {
+    throw new Error('Local macOS packaging requires Apple Silicon (arm64)')
+  }
   const identity = getLocalBuildIdentity()
   console.log(`[build:mac] local update version ${identity.version}`)
   execFileSync(
     process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm',
-    ['exec', 'electron-builder', '--config', 'config/electron-builder.config.cjs', '--mac'],
+    [
+      'exec',
+      'electron-builder',
+      '--config',
+      'config/electron-builder.config.cjs',
+      '--mac',
+      '--arm64'
+    ],
     {
       env: {
         ...process.env,

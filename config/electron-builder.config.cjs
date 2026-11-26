@@ -99,6 +99,10 @@ const {
 const {
   buildMacNativeAddon
 } = require('./scripts/desktop-distribution/macos/build-macos-native-addon.cjs')
+const {
+  findInstalledMacSigningIdentity,
+  resolveExplicitMacSigningIdentity
+} = require('./scripts/desktop-distribution/macos/mac-signing-identity.cjs')
 
 // Dev channels need release bundle ID/signature/notarization so Squirrel.Mac accepts updates and macOS retains app identity.
 const isMacHourly = process.env.ORCA_MAC_HOURLY === '1'
@@ -686,9 +690,8 @@ module.exports = {
         rank: 'Alternate'
       }))
     ],
-    // Set for ONNX Runtime (#22690, #39135), now gone; transcribe-cpp needs 11.0, Electron 12.0. Kept as
-    // minimum baseline. The update-manifest gate reads this from Info.plist.
-    minimumSystemVersion: '13.4',
+    // Apple Silicon (arm64) builds require macOS 26.0+; gate-mac-update-manifests mirrors this to *-mac.yml.
+    minimumSystemVersion: '26.0',
     icon: 'resources/build/icon.icns',
     entitlements: 'resources/build/entitlements.mac.plist',
     entitlementsInherit: 'resources/build/entitlements.mac.plist',
@@ -747,17 +750,11 @@ module.exports = {
     target: [
       {
         target: 'dmg',
-        arch:
-          isMacRelease || process.env.CI === 'true'
-            ? ['x64', 'arm64']
-            : [process.arch === 'arm64' ? 'arm64' : 'x64']
+        arch: ['arm64']
       },
       {
         target: 'zip',
-        arch:
-          isMacRelease || process.env.CI === 'true'
-            ? ['x64', 'arm64']
-            : [process.arch === 'arm64' ? 'arm64' : 'x64']
+        arch: ['arm64']
       }
     ]
   },
@@ -905,9 +902,13 @@ async function signMacComputerUseHelper(helperAppPath, packager) {
       ? await packager.codeSigningInfo.value
       : null
   const identity =
-    process.env.ORCA_COMPUTER_MACOS_SIGN_IDENTITY ??
-    process.env.CSC_NAME ??
-    findInstalledMacSigningIdentity(codeSigningInfo?.keychainFile) ??
+    resolveExplicitMacSigningIdentity(
+      process.env.ORCA_COMPUTER_MACOS_SIGN_IDENTITY ?? process.env.CSC_NAME,
+      codeSigningInfo?.keychainFile
+    ) ??
+    findInstalledMacSigningIdentity(codeSigningInfo?.keychainFile, {
+      allowDevelopment: !isMacRelease
+    }) ??
     (isMacRelease ? null : '-')
   if (!identity) {
     throw new Error('Missing signing identity for Coto Computer Use helper app')
@@ -920,13 +921,12 @@ async function signMacComputerUseHelper(helperAppPath, packager) {
   })
 }
 
-// electron-builder `Arch` enum: x64=1, arm64=3. A universal (4) slice has no single arch.
+// electron-builder `Arch` enum: arm64=3. Coto for macOS ships Apple Silicon only.
 function macSliceArch(archEnum, purpose) {
-  const arch = { 1: 'x64', 3: 'arm64' }[archEnum]
-  if (!arch) {
+  if (archEnum !== 3) {
     throw new Error(`Unsupported ${purpose} architecture: ${archEnum}`)
   }
-  return arch
+  return 'arm64'
 }
 
 // Why after the node_modules prune: the helper copies this slice's node-pty.
@@ -966,8 +966,10 @@ async function signMacStandaloneHelper(helperPath, helperName, packager, entitle
       ? await packager.codeSigningInfo.value
       : null
   const identity =
-    process.env.CSC_NAME ??
-    findInstalledMacSigningIdentity(codeSigningInfo?.keychainFile) ??
+    resolveExplicitMacSigningIdentity(process.env.CSC_NAME, codeSigningInfo?.keychainFile) ??
+    findInstalledMacSigningIdentity(codeSigningInfo?.keychainFile, {
+      allowDevelopment: !isMacRelease
+    }) ??
     (isMacRelease ? null : '-')
   if (!identity) {
     throw new Error(`Missing signing identity for ${helperName} helper`)
@@ -998,26 +1000,4 @@ function codesignArgs(identity, targetPath) {
   }
   args.push(targetPath)
   return args
-}
-
-function findInstalledMacSigningIdentity(keychainFile) {
-  try {
-    const output = execFileSync(
-      'security',
-      ['find-identity', '-v', '-p', 'codesigning', ...(keychainFile ? [keychainFile] : [])],
-      {
-        encoding: 'utf8'
-      }
-    )
-    const releaseMatch =
-      output.match(/"([^"]*Developer ID Application:[^"]+)"/) ??
-      output.match(/"([^"]*Apple Distribution:[^"]+)"/)
-    if (releaseMatch?.[1]) {
-      return releaseMatch[1]
-    }
-    if (!isMacRelease) {
-      return output.match(/"([^"]*Apple Development:[^"]+)"/)?.[1] ?? null
-    }
-  } catch {}
-  return null
 }

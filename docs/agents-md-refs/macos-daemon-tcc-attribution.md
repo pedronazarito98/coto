@@ -78,8 +78,8 @@ it cannot predict access to other folders a tool might later open or a grant rev
 
 The helper's Node declares `LC_BUILD_VERSION minos 13.5`, which is also the helper's
 `LSMinimumSystemVersion` and `NODE_RUNTIME_DARWIN_MINIMUM_OS`. Packaging fails if a Node pin bump
-changes it. Below 13.5 the launcher returns before copying and the fork runs, so those Macs keep the
-pre-#25848 behaviour. Coto itself needs macOS 13.4, so only 13.4.x Macs take that path.
+changes it. Coto itself requires Apple Silicon and macOS 26.0 or newer, so all supported Macs run
+the signed helper bundle.
 
 ## First launch
 

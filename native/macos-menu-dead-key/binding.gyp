@@ -5,7 +5,7 @@
       "sources": ["menu-dead-key.m"],
       "xcode_settings": {
         "CLANG_ENABLE_OBJC_ARC": "YES",
-        "MACOSX_DEPLOYMENT_TARGET": "11.0",
+        "MACOSX_DEPLOYMENT_TARGET": "26.0",
         "OTHER_LDFLAGS": ["-framework AppKit"]
       }
     }

@@ -1,7 +1,7 @@
 import { defineFixture } from '../../component-fixtures/component-fixture'
 import { MacosUpdateRequirementDialog } from './MacosUpdateRequirementDialog'
 
-const requirement = { version: '1.5.0', minimumMacosVersion: '13.4' }
+const requirement = { version: '1.5.0', minimumMacosVersion: '26.0' }
 
 function fixture(support: 'supported' | 'unsupported' | 'unknown' | undefined) {
   return defineFixture({

@@ -214,7 +214,7 @@ PR、Issue、プロジェクトボードをアプリ内で閲覧 — 任意の�
 ### デスクトップ — macOS, Windows, Linux
 
 - **[coto.app からダウンロード](https://coto.app/download)**
-- またはビルドを直接入手: [macOS Apple Silicon](https://github.com/pedronazarito98/coto/releases/latest/download/coto-macos-arm64.dmg) · [macOS Intel](https://github.com/pedronazarito98/coto/releases/latest/download/coto-macos-x64.dmg) · [Windows (.exe)](https://github.com/pedronazarito98/coto/releases/latest/download/coto-windows-setup.exe) · [Linux AppImage](https://github.com/pedronazarito98/coto/releases/latest/download/coto-linux.AppImage) · [すべてのビルド](https://github.com/pedronazarito98/coto/releases/latest)
+- またはビルドを直接入手: [macOS Apple Silicon (macOS 26.0+)](https://github.com/pedronazarito98/coto/releases/latest/download/coto-macos-arm64.dmg) · [Windows (.exe)](https://github.com/pedronazarito98/coto/releases/latest/download/coto-windows-setup.exe) · [Linux AppImage](https://github.com/pedronazarito98/coto/releases/latest/download/coto-linux.AppImage) · [すべてのビルド](https://github.com/pedronazarito98/coto/releases/latest)
 
 _パッケージマネージャーからもインストールできます:_
 

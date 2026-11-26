@@ -2,8 +2,9 @@
 // Darwin minors drift from macOS minors (12.6 and 12.7 both report Darwin 21.6), so each minor floor
 // needs a verified entry; truncating 15.4 to 24.0.0 would offer the update to macOS 15.0.
 const MINOR_FLOOR_DARWIN_VERSIONS: Readonly<Record<string, string>> = {
-  // 13.3.x runs Darwin 22.4.0; 13.4 and 13.4.1 run 22.5.0.
-  '13.4': '22.5.0'
+  // 13.3.x runs Darwin 22.4.0; 13.4 and 13.4.1 run 22.5.0; macOS 26.0 runs Darwin 25.0.0.
+  '13.4': '22.5.0',
+  '26.0': '25.0.0'
 }
 
 // macOS 11-15 run Darwin 20-24; macOS 26 runs Darwin 25.

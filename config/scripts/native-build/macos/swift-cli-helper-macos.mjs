@@ -5,7 +5,9 @@ import path from 'node:path'
 
 const repoRoot = path.resolve(import.meta.dirname, '../../../..')
 
-/** Builds a single-file Swift CLI helper from native/<nativeDir>/main.swift (universal unless --single-arch). */
+const TARGET_TRIPLE = 'arm64-apple-macosx26.0'
+
+/** Builds an Apple Silicon Swift CLI helper from native/<nativeDir>/main.swift targeting macOS 26.0. */
 export function buildSwiftCliHelper({ nativeDir, executable, argv }) {
   if (process.platform !== 'darwin') {
     return
@@ -14,33 +16,14 @@ export function buildSwiftCliHelper({ nativeDir, executable, argv }) {
   const outputPath =
     readArg(argv, '--output') ??
     path.join(repoRoot, 'native', nativeDir, '.build', 'release', executable)
-  const triples = argv.includes('--single-arch')
-    ? [process.arch === 'arm64' ? 'arm64-apple-macosx' : 'x86_64-apple-macosx']
-    : ['arm64-apple-macosx', 'x86_64-apple-macosx']
   const workDir = mkdtempSync(path.join(tmpdir(), `${executable}-`))
   try {
-    const builtBinaries = triples.map((triple) => {
-      const output = path.join(workDir, `${executable}-${triple}`)
-      execFileSync(
-        'swiftc',
-        [
-          '-O',
-          sourcePath,
-          '-target',
-          triple.replace('-apple-macosx', '-apple-macosx11.0'),
-          '-o',
-          output
-        ],
-        { stdio: 'inherit' }
-      )
-      return output
+    const builtBinary = path.join(workDir, `${executable}-${TARGET_TRIPLE}`)
+    execFileSync('swiftc', ['-O', sourcePath, '-target', TARGET_TRIPLE, '-o', builtBinary], {
+      stdio: 'inherit'
     })
     mkdirSync(path.dirname(outputPath), { recursive: true })
-    if (builtBinaries.length === 1) {
-      execFileSync('cp', [builtBinaries[0], outputPath])
-    } else {
-      execFileSync('lipo', ['-create', ...builtBinaries, '-output', outputPath])
-    }
+    execFileSync('cp', [builtBinary, outputPath])
     chmodSync(outputPath, 0o755)
   } finally {
     rmSync(workDir, { recursive: true, force: true })

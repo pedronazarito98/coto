@@ -16,10 +16,10 @@ export function withMinimumSystemVersion(manifest, darwinVersion) {
   return `${lines.join('\n')}\n`
 }
 
-function readMinimumMacosVersion(distDir) {
+export function readMinimumMacosVersion(distDir) {
   const versions = new Set()
   for (const entry of readdirSync(distDir, { withFileTypes: true })) {
-    if (!entry.isDirectory() || !entry.name.startsWith('mac')) {
+    if (!entry.isDirectory() || entry.name !== 'mac-arm64') {
       continue
     }
     for (const app of readdirSync(join(distDir, entry.name))) {
@@ -36,7 +36,7 @@ function readMinimumMacosVersion(distDir) {
   }
   if (versions.size !== 1) {
     throw new Error(
-      `Expected one LSMinimumSystemVersion across ${distDir}, found ${[...versions].join(', ')}`
+      `Expected one LSMinimumSystemVersion across ${distDir}/mac-arm64, found ${[...versions].join(', ')}`
     )
   }
   return [...versions][0]

@@ -55,9 +55,8 @@ fi
 ARCH="$(uname -m)"
 case "$ARCH" in
   arm64) ASSET="coto-macos-arm64.dmg" ;;
-  x86_64) ASSET="coto-macos-x64.dmg" ;;
   *)
-    echo "Unsupported macOS architecture: $ARCH" >&2
+    echo "Unsupported macOS architecture: $ARCH (Coto requires Apple Silicon / arm64 on macOS 26.0+)" >&2
     exit 2
     ;;
 esac
