@@ -1,10 +1,6 @@
 name: Docs site
 
 on:
-  # Stable desktop releases are the production publication boundary. The
-  # release gate below excludes mobile and prerelease tags from this trigger.
-  release:
-    types: [published]
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
     paths:
